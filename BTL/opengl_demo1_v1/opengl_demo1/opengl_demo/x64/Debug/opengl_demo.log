@@ -1,2 +1,0 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(514,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (BanTay.vcxproj, opengl_demo.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  opengl_demo.vcxproj -> C:\Users\Le Minh Hung\Desktop\ThirdYear\DHMT\BTL\opengl_demo1_v1\opengl_demo1\x64\Debug\Demo.exe
