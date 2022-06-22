@@ -330,14 +330,14 @@ void room()
 	block(model_room, san);
 	mat4 tran = identity_mat4() * translate(vec3(0, 1, 0)) * scale(vec3(2.5, 0.01, 1.6));
 	block(model_room, tran);
-	
+
 	(LoadTexture("gray.png", &texture));
 	mat4 lung = translate(vec3(0, 0.25, -0.8)) * rotate_y(180) * scale(vec3(2.5, 1.5, 0.01));
 	block(model_room, lung);
-	mat4 trai = translate(vec3(1.25, 0.25, 0)) * scale(vec3(0.01, 1.5, 1.6));
+	/*mat4 trai = translate(vec3(1.25, 0.25, 0)) * scale(vec3(0.01, 1.5, 1.6));
 	block(model_room, trai);
 	mat4 phai = translate(vec3(-1.25, 0.25, 0)) * rotate_y(180) * scale(vec3(0.01, 1.5, 1.6));
-	block(model_room, phai);
+	block(model_room, phai);*/
 	model_room = mvstack.pop();
 }
 
@@ -641,13 +641,14 @@ mat4 model_room_light;
 bool checkturn = false;
 void roomlight() {
 	GLuint texture;
-	if(checkturn)
+	if (checkturn)
 		(LoadTexture("vang.jpg", &texture));
 	else
 		(LoadTexture("nau.jpg", &texture));
 	mat4 light = translate(vec3(0.0, 0.8, -0.4)) * scale(vec3(1, 0.05, 0.05));
 	block(model_room_light, light);
 }
+
 //-----------------------------------------------
 //cua so
 mat4 model_window;
@@ -678,6 +679,39 @@ void cuaso() {
 	cuasotrai();
 	canhcua2 = identity_mat4() * translate(vec3(-0.0375, 0.0, 0.0)) * rotate_y(quaycuaphai[0]) * translate(vec3(0.055, 0.0, 0.0));
 	cuasophai();
+}
+//------------------------------------
+//ve dong ho
+mat4 model_clock;
+mat4 combo;
+double lac = 0;
+void body_clockk() {
+	mat4 body_clock = identity_mat4() * translate(vec3(0.0, 0.45, -0.75)) * scale(vec3(0.12, 0.21, 0.1/*0.08,0.25,0.1*/));
+	block(model_clock, body_clock);
+	GLuint texture;
+	(LoadTexture("white.jpg", &texture));
+	mat4 body_clock_white = identity_mat4() * translate(vec3(0.0, 0.45, -0.73)) * scale(vec3(0.08, 0.16, 0.08));
+	block(model_clock, body_clock_white);
+	(LoadTexture("nau.jpg", &texture));
+	mat4 clockwise_hour = identity_mat4() * translate(vec3(0.011, 0.44, -0.7)) * rotate_z(135) * scale(vec3(0.035, 0.008, 0.04));
+	block(model_clock, clockwise_hour);
+	mat4 clockwise_minus = identity_mat4() * translate(vec3(0.0, 0.43, -0.7)) * rotate_z(90) * scale(vec3(0.06, 0.008, 0.04));
+	block(model_clock, clockwise_minus);
+}
+void shaker_bar() {
+	mat4 instance = identity_mat4() * translate(vec3(0, -0.065, 0)) * scale(vec3(0.01, 0.13, 0.03));
+	block(model_clock, combo * instance);
+}
+void bob() {
+	mat4 instance = identity_mat4() * translate(vec3(0.0, 0.225 - 0.365, 0)) * scale(vec3(0.04, 0.04, 0.03));
+	block(model_clock, combo * instance);
+}
+bool isLacXuoi = true;
+void clockk() {
+	body_clockk();
+	combo = identity_mat4() * translate(vec3(0.0, 0.365, -0.75)) * rotate_z(lac);
+	shaker_bar();
+	bob();
 }
 //------------------------------------
 string ReadShaderSourceFile(string fileName) {
@@ -821,6 +855,11 @@ void DisplayFunc(void)
 	cuaso();
 	model_window = mvstack.pop();
 
+	mvstack.push(model_clock);
+	model_clock = rotate_y(rotateAll) * scale(vec3(s[0], s[1], s[2]));
+	clockk();
+	model_clock = mvstack.pop();
+
 	glutSwapBuffers();
 }
 // ------------------------------------------
@@ -857,6 +896,16 @@ void IdleFunc(void)
 			if (quaydeuquaydeu <= -75)
 				xoayxuoi = true;
 		}
+	}
+	if (isLacXuoi)
+	{
+		lac += 5;
+		isLacXuoi = (lac != 30);
+	}
+	else
+	{
+		lac -= 5;
+		isLacXuoi = (lac == -30);
 	}
 	glutPostRedisplay();
 }
@@ -950,7 +999,7 @@ void KeyboardFunc(unsigned char key, int x, int y)
 	case ' ':
 		battat = true - battat;
 		break;
-		
+
 		//quay ca quat
 	case 'y':
 		xoay += 5;

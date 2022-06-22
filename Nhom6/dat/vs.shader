@@ -16,6 +16,6 @@ vec4 fragment_color;
 void main()
 {
 	texture_coordinates = texture_position;
-	gl_Position = projection_mat_shader * model_mat_shader * vertex_position;
+	gl_Position = projection_mat_shader * model_mat_shader /** view_mat_shader */* vertex_position;
 	//fragment_color = vertex_color; 
 }
